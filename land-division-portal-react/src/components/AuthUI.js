@@ -4,6 +4,7 @@ import "firebase/compat/auth";
 import * as firebaseui from "firebaseui";
 import { auth } from "../firebase/firebase"; // adjust the path if needed
 import { useNavigate } from "react-router-dom";
+import "../styles/AuthUI.css";
 
 const AuthUI = () => {
     const navigate = useNavigate();

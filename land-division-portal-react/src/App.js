@@ -1,6 +1,6 @@
 import { Route, Routes } from 'react-router-dom';
 import './App.css';
-import AuthUI from './components/AuthUI';
+import LandingPage from './components/LandingPage.js';
 import Dashboard from './components/Dashboard.js';
 import PrivateRoute from './components/PrivateRoute.js'
 
@@ -8,7 +8,7 @@ function App() {
   return (
     <div className="App">
       <Routes>
-        <Route path="/" element={<AuthUI />} />
+        <Route path="/" element={<LandingPage />} />
         <Route path="/dashboard"
         element={
           <PrivateRoute>
