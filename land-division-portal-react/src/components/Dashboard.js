@@ -1,4 +1,5 @@
 import React from 'react';
+import FormComponent from './FormComponent';
 
 // Dummy application data
 const dummyApplications = [
@@ -60,7 +61,9 @@ const Dashboard = () => {
           </li>
         ))}
       </ul>
+      <FormComponent />
     </div>
+
   );
 };
 

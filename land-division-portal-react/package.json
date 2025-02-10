@@ -4,7 +4,7 @@
   "private": true,
   "dependencies": {
     "cra-template": "1.2.0",
-    "firebase": "^11.2.0",
+    "firebase": "^10.14.1",
     "firebaseui": "^6.1.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
