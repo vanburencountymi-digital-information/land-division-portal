@@ -18,17 +18,28 @@ const AuthUI = () => {
         const uiConfig = {
             signInOptions: [
                 {
-                provider: firebase.auth.EmailAuthProvider.PROVIDER_ID,
-                requireDisplayName: false,
+                    provider: firebase.auth.EmailAuthProvider.PROVIDER_ID,
+                    requireDisplayName: false,
+                    signInMethod: firebase.auth.EmailAuthProvider.EMAIL_PASSWORD_SIGN_IN_METHOD,
+                    signInMethods: [
+                        firebase.auth.EmailAuthProvider.EMAIL_PASSWORD_SIGN_IN_METHOD,
+                        firebase.auth.EmailAuthProvider.EMAIL_LINK_SIGN_IN_METHOD
+                    ],
+                    passwordRequired: true,
+                    emailLinkSignIn: function() {
+                        return {
+                            handleCodeInApp: true
+                        };
+                    }
                 },
                 {
-                provider: firebase.auth.GoogleAuthProvider.PROVIDER_ID
+                    provider: firebase.auth.GoogleAuthProvider.PROVIDER_ID
                 },
             ],
             callbacks: {
                 signInSuccessWithAuthResult: function (authResult, redirectUrl) {
                     // User successfully signed in.
-                    navigate("/dashboard");
+                    navigate("/landing");
                     return false;
                 },
             },

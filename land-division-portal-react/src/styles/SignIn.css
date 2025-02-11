@@ -1,0 +1,50 @@
+/* Overall container for the landing page */
+.landing-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 2rem;
+    background-color: black;
+    /* background: url('path/to/your/background-image.jpg') no-repeat center center;
+    background-size: cover; */
+  }
+  
+  /* Header styling for the landing page */
+  .landing-header {
+    text-align: center;
+    margin-bottom: 2rem;
+    color: #ffffff;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  }
+  
+  /* Container for the AuthUI component */
+  .auth-container {
+    background: rgba(255, 255, 255, 0.95); /* slight transparency for a modern effect */
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px; /* limits the width on larger screens */
+  }
+  
+  /* Footer styling for the landing page */
+  .landing-footer {
+    margin-top: 2rem;
+    text-align: center;
+    color: #ffffff;
+    font-size: 0.9rem;
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 600px) {
+    .landing-page {
+      padding: 1rem;
+    }
+    .auth-container {
+      padding: 1.5rem;
+      width: 90%;
+    }
+  }
+  
