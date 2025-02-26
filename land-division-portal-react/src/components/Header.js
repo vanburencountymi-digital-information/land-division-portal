@@ -1,61 +1,76 @@
-import React from "react";
-import { useAuth } from "../contexts/AuthContext";
-import { useNavigate } from "react-router-dom";
+// Header.js
+import React from 'react';
+import { useTheme } from 'next-themes';
+import { Box, Flex, Heading, Button, HStack } from '@chakra-ui/react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
+import { hasPermission } from '../utils/roles';
 
 const Header = () => {
-  const { currentUser, logout } = useAuth();
+  const { theme, setTheme } = useTheme();
+  const bgColor = theme === 'dark' ? 'blue.700' : 'blue.100';
+  const textColor = theme === 'dark' ? 'white' : 'black';
   const navigate = useNavigate();
+  const { logout, currentUser, userRole } = useAuth();
 
   const handleSignOut = async () => {
-    await logout();
-    navigate('/landing');
-  };
-
-  const handleNavigateHome = () => {
-    navigate('/landing');
+    try {
+      await logout();
+      navigate('/'); // Navigate to sign in page
+    } catch (error) {
+      console.error("Failed to sign out:", error);
+    }
   };
 
   return (
-    <header className="bg-primary p-4 flex justify-between items-center">
-      <div className="flex items-center gap-4">
-        <h1 className="text-xl font-bold">Land Division Portal</h1>
-        <nav>
-          <button 
-            onClick={handleNavigateHome}
-            className="px-4 py-2 hover:bg-opacity-80"
+    <Box bg={bgColor} px={4} py={2}>
+      <Flex h={16} alignItems="center" justifyContent="space-between">
+        <HStack spacing={8} alignItems="center">
+          <Heading as="h1" size="xl" color={textColor}>
+            Land Division Portal
+          </Heading>
+          <HStack as="nav" spacing={4} display={{ base: 'none', md: 'flex' }}>
+            <Button variant="ghost" color={textColor} onClick={() => navigate('/landing')}>
+              Home
+            </Button>
+            <Button variant="ghost" color={textColor}>
+              Applications
+            </Button>
+            {hasPermission(userRole, 'canManageUsers') && (
+              <Button variant="ghost" color={textColor} onClick={() => navigate('/user-management')}>
+                User Management
+              </Button>
+            )}
+            {userRole === 'admin' && (
+              <Button variant="ghost" color={textColor} onClick={() => navigate('/workflow-tester')}>
+                Workflow Tester
+              </Button>
+            )}
+          </HStack>
+        </HStack>
+        <Flex alignItems="center">
+          <Button
+            onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+            colorPalette="teal"
+            variant="solid"
           >
-            Home
-          </button>
-          <button 
-            onClick={() => navigate('/applications')}
-            className="px-4 py-2 hover:bg-opacity-80"
-          >
-            Applications
-          </button>
-        </nav>
-      </div>
-
-      <div className="flex items-center gap-4">
-        {currentUser ? (
-          <>
-            <span>Welcome, {currentUser.email}</span>
-            <button 
+            Toggle {theme === 'light' ? 'Dark' : 'Light'}
+          </Button>
+        </Flex>
+        {currentUser && (
+          <Flex alignItems="center">
+            <span style={{ marginRight: '1rem' }}>{currentUser.email}</span>
+            <Button
               onClick={handleSignOut}
-              className="px-4 py-2 bg-secondary hover:bg-opacity-80 rounded"
+              colorPalette="red"
+              variant="solid"
             >
               Sign Out
-            </button>
-          </>
-        ) : (
-          <button 
-            onClick={() => navigate('/login')}
-            className="px-4 py-2 bg-secondary hover:bg-opacity-80 rounded"
-          >
-            Sign In
-          </button>
+            </Button>
+          </Flex>
         )}
-      </div>
-    </header>
+      </Flex>
+    </Box>
   );
 };
 

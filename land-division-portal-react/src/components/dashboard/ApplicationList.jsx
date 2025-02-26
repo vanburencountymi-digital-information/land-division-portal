@@ -1,11 +1,27 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { db } from '../../firebase/firebase';
+import {
+  Box,
+  Flex,
+  Heading,
+  Button,
+  Text,
+  Spinner,
+} from '@chakra-ui/react';
+import { useTheme } from 'next-themes';
 
 const ApplicationList = ({ onApplicationClick, onNewApplication }) => {
   const { currentUser } = useAuth();
+  const { theme } = useTheme();
   const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  // Define colors based on current theme
+  const bgColor = theme === 'dark' ? 'gray.800' : 'gray.100';
+  const textColor = theme === 'dark' ? 'whiteAlpha.900' : 'gray.800';
+  const cardBg = theme === 'dark' ? 'gray.700' : 'white';
+  const cardHoverBg = theme === 'dark' ? 'gray.600' : 'gray.50';
 
   useEffect(() => {
     const fetchApplications = async () => {
@@ -33,49 +49,71 @@ const ApplicationList = ({ onApplicationClick, onNewApplication }) => {
   }, [currentUser]);
 
   if (loading) {
-    return <div className="loading">Loading your applications...</div>;
+    return (
+      <Flex
+        justify="center"
+        align="center"
+        height="100%"
+        bg={bgColor}
+        color={textColor}
+        p={4}
+      >
+        <Spinner size="lg" />
+        <Text ml={2}>Loading your applications...</Text>
+      </Flex>
+    );
   }
 
   return (
-    <div className="applications-container">
-      <div className="applications-header">
-        <h2>My Applications</h2>
-        <button
-          className="new-application-button"
-          onClick={onNewApplication}
-        >
+    <Box p={4} bg={bgColor} color={textColor} minHeight="10vh">
+      <Flex justify="space-between" align="center" mb={4}>
+        <Heading as="h2" size="lg">
+          My Applications
+        </Heading>
+        <Button colorPalette="blue" onClick={onNewApplication}>
           Start a New Application
-        </button>
-      </div>
+        </Button>
+      </Flex>
 
       {applications.length === 0 ? (
-        <div className="no-applications">
-          <p>You haven't submitted any applications yet.</p>
-          <p>Click "Start a New Application" to begin.</p>
-        </div>
+        <Box textAlign="center">
+          <Text>You haven't submitted any applications yet.</Text>
+          <Text>Click "Start a New Application" to begin.</Text>
+        </Box>
       ) : (
-        <div className="applications-list">
+        <Box>
           {applications.map(application => (
-            <div
+            <Flex
               key={application.id}
-              className="application-card"
+              p={4}
+              bg={cardBg}
+              borderWidth="1px"
+              borderRadius="md"
+              mb={2}
+              align="center"
+              justify="space-between"
+              cursor="pointer"
+              _hover={{ bg: cardHoverBg }}
               onClick={() => onApplicationClick(application.id)}
             >
-              <div className="application-info">
-                <h3>{application.type || 'Land Division Application'}</h3>
-                <p className="application-status">
-                  Status: {application.status || 'Pending'}
-                </p>
-                <p className="application-date">
-                  Submitted: {application.createdAt?.toDate().toLocaleDateString()}
-                </p>
-              </div>
-              <div className="application-arrow">→</div>
-            </div>
+              <Box>
+                <Heading as="h3" size="md">
+                  {application.type || 'Land Division Application'}
+                </Heading>
+                <Text>Status: {application.status || 'Pending'}</Text>
+                <Text>
+                  Submitted:{' '}
+                  {application.createdAt?.toDate().toLocaleDateString()}
+                </Text>
+              </Box>
+              <Box fontSize="2xl" ml={4}>
+                →
+              </Box>
+            </Flex>
           ))}
-        </div>
+        </Box>
       )}
-    </div>
+    </Box>
   );
 };
 

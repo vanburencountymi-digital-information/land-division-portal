@@ -53,7 +53,7 @@ const Profile = () => {
       formInputs.forEach(input => {
         if (input.id && input.value) {
           // Remove 'input_' prefix and trailing '_#' if they exist
-          const fieldName = input.id.replace('input_', '').replace(/_\d+$/, '');
+          const fieldName = input.id;
           formData[fieldName] = input.value;
         }
       });

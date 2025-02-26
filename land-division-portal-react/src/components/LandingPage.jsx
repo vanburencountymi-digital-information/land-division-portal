@@ -2,11 +2,21 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { db } from '../firebase/firebase';
-import '../styles/LandingPage.css';
+import {
+  Box,
+  VStack,
+  HStack,
+  Heading,
+  Button,
+  Spinner,
+  Text,
+} from '@chakra-ui/react';
+import { useTheme } from 'next-themes';
 
 const LandingPage = () => {
   const { currentUser } = useAuth();
   const navigate = useNavigate();
+  const { theme } = useTheme(); // Get the current theme ('light' or 'dark')
   const [profileCompleted, setProfileCompleted] = useState(false);
   const [loading, setLoading] = useState(true);
   const [userName, setUserName] = useState('');
@@ -17,7 +27,6 @@ const LandingPage = () => {
         const userDoc = await db.collection('users').doc(currentUser.uid).get();
         const userData = userDoc.data();
         setProfileCompleted(userDoc.exists && userData?.profileCompleted);
-        
         if (userDoc.exists && userData?.first) {
           setUserName(userData.first);
         }
@@ -32,43 +41,50 @@ const LandingPage = () => {
   }, [currentUser]);
 
   if (loading) {
-    return <div className="loading">Loading...</div>;
+    return (
+      <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
+        <Spinner size="xl" />
+      </Box>
+    );
   }
 
+  // Use theme-dependent colors, either by referencing tokens from your theme or by setting them conditionally.
+  const bg = theme === 'dark' ? 'gray.800' : 'white';
+  const textColor = theme === 'dark' ? 'white' : 'black';
+
   return (
-    <div className="landing-container">
-      {userName && <h1>Hi, {userName}!</h1>}
-      <h1>{profileCompleted ? 'Welcome back to' : 'Welcome to'} the Land Division Portal</h1>
-      <div className="button-grid">
-        <button
-          className="landing-button"
-          onClick={() => navigate('/profile')}
-        >
+    <VStack
+      spacing={6}
+      p={8}
+      minH="100vh"
+      justifyContent="center"
+      bg={bg}
+      color={textColor}
+    >
+      {userName && <Heading size="lg">Hi, {userName}!</Heading>}
+      <Heading size="xl">
+        {profileCompleted ? 'Welcome back to' : 'Welcome to'} the Land Division Portal
+      </Heading>
+      <HStack spacing={4}>
+        <Button colorPalette="teal" onClick={() => navigate('/profile')}>
           Profile
-        </button>
-        <button
-          className="landing-button"
-          onClick={() => navigate('/parcels')}
-          disabled={!profileCompleted}
-        >
-          My Parcels
-        </button>
-        <button
-          className="landing-button"
+        </Button>
+        <Button
+          colorPalette="purple"
           onClick={() => navigate('/dashboard')}
           disabled={!profileCompleted}
         >
           My Applications
-        </button>
-        <button
-          className="landing-button"
-          onClick={() => navigate('/new-application')}
+        </Button>
+        <Button
+          colorPalette="purple"
+          onClick={() => navigate('/workflow-designer')}
           disabled={!profileCompleted}
         >
-          Start a New Application
-        </button>
-      </div>
-    </div>
+          Workflow Designer
+        </Button>
+      </HStack>
+    </VStack>
   );
 };
 

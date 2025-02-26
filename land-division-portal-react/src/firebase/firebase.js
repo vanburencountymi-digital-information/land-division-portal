@@ -26,16 +26,15 @@ const storage = firebase.storage();
 // Function to handle file upload
 const uploadFile = async (file, path) => {
   try {
-    // Create a storage reference
+    console.log('Starting upload for file:', file.name, 'to path:', path);
     const storageRef = storage.ref(path);
 
-    // Upload file
+    console.log('Uploading file...');
     const snapshot = await storageRef.put(file);
 
-    // Get download URL
+    console.log('Getting download URL...');
     const downloadURL = await snapshot.ref.getDownloadURL();
 
-    // Create metadata object
     const metadata = {
       name: file.name,
       size: file.size,
@@ -45,10 +44,10 @@ const uploadFile = async (file, path) => {
       downloadURL: downloadURL,
       path: path
     };
-
+    console.log('Upload complete, metadata:', metadata);
     return metadata;
   } catch (error) {
-    console.error("Error uploading file:", error);
+    console.error("Error uploading file:", error.message, error.code);
     throw error;
   }
 };
