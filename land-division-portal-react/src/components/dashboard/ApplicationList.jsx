@@ -78,7 +78,7 @@ const ApplicationList = ({ onApplicationClick, onNewApplication }) => {
       {applications.length === 0 ? (
         <Box textAlign="center">
           <Text>You haven't submitted any applications yet.</Text>
-          <Text>Click "Start a New Application" to begin.</Text>
+          <Text>Search for parcels, select the parcels and action to begin the application process.</Text>
         </Box>
       ) : (
         <Box>

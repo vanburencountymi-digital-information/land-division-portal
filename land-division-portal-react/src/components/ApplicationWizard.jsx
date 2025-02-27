@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { db } from '../firebase/firebase';
 import { toaster } from './ui/toaster';
 import {
@@ -7,6 +7,9 @@ import {
   Stack,
   Group,
   Heading,
+  Text,
+  List,
+  Steps,
 } from '@chakra-ui/react';
 import {
   StepsRoot,
@@ -18,13 +21,32 @@ import {
   StepsNextTrigger,
 } from './ui/steps';
 
-const ApplicationWizard = ({ selectedParcels, actionType, onCancel }) => {
+import { useTheme } from 'next-themes';
+
+const ApplicationWizard = ({ selectedParcels, actionType, onCancel, onSelectSubStep }) => {
+  const { theme } = useTheme();
+  const textColor = theme === 'dark' ? 'whiteAlpha.900' : 'gray.800';
+  const borderColor = theme === 'dark' ? 'gray.600' : 'gray.200';
+  const bgColor = theme === 'dark' ? 'gray.800' : 'white';
+
   const [applicationData, setApplicationData] = useState({
     applicantInfo: {},
     parcelInfo: selectedParcels,
     documents: {},
     status: 'draft'
   });
+
+  const [currentMainStep, setCurrentMainStep] = useState(0);
+  const [selectedSubStep, setSelectedSubStep] = useState(null);
+
+  useEffect(() => {
+    setSelectedSubStep(null);
+  }, [currentMainStep]);
+
+  const handleMainStepChange = (details) => {
+    console.log('Main step changed to:', details.step);
+    setCurrentMainStep(details.step);
+  };
 
   const handleSubmit = async () => {
     try {
@@ -53,74 +75,154 @@ const ApplicationWizard = ({ selectedParcels, actionType, onCancel }) => {
     }
   };
 
-  return (
-    <Box p={4}>
-      <Heading size="lg" mb={6}>{actionType} Application</Heading>
-      
-      <StepsRoot 
-        orientation="vertical" 
-        height="400px" 
-        defaultValue={0} 
-        count={4}
+  const workflowSteps = [
+    {
+      title: 'Submit Application',
+      status: 'in-progress',
+      subSteps: [
+        { 
+          id: 'applicant-info',
+          title: 'Confirm Applicant Information',
+          status: 'pending',
+          isClickable: true
+        },
+        { 
+          id: 'parcel-details',
+          title: 'Confirm Parcel Details',
+          status: 'pending',
+          isClickable: true
+        },
+        { 
+          id: 'documents',
+          title: 'Upload Required Documents',
+          status: 'pending',
+          isClickable: true
+        },
+        { 
+          id: 'review',
+          title: 'Review & Submit',
+          status: 'pending',
+          isClickable: true
+        },
+      ],
+    },
+    {
+      title: 'Township Review',
+      status: 'locked',
+      subSteps: [
+        { 
+          id: 'assessor-review',
+          title: 'Application Review by Assessor',
+          status: 'locked',
+          isClickable: false
+        },
+        { 
+          id: 'zoning-review',
+          title: 'Application Review by Zoning Officer',
+          status: 'locked',
+          isClickable: false
+        },
+      ],
+    },
+    {
+      title: 'Final Review',
+      subSteps: [
+        { title: 'Application Review by County Address Administrator', content: 'Application Review' },
+        { title: 'New Parcels Created', content: 'New Parcels' },
+      ],
+    },
+  ];
+
+  const handleSubStepClick = (mainStepIndex, subStep) => {
+    if (!subStep.isClickable) return;
+    
+    setSelectedSubStep(subStep.id);
+    onSelectSubStep(subStep.id); // This would be passed up to parent to show appropriate form
+  };
+
+  const renderSubStepContent = () => {
+    if (!selectedSubStep) return null;
+
+    return (
+      <Box
+        mt={6}
+        p={4}
+        borderWidth="1px"
+        borderColor={borderColor}
+        borderRadius="md"
+        bg={bgColor}
       >
-        {({ value }) => (
-          <>
+        {/* This will be replaced with the actual form components */}
+        <Text>Form content for: {selectedSubStep}</Text>
+      </Box>
+    );
+  };
+
+  return (
+    <Box p={4} color={textColor} minH="90vh">
+      <Heading size="lg" mb={6} color={textColor}>{actionType} Application Progress</Heading>
+      
+      <Stack spacing={8}>
+        <Box outline={borderColor} borderRadius="md" borderWidth="1px" padding={4}>
+          <StepsRoot 
+            orientation="horizontal" 
+            step={currentMainStep}
+            onStepChange={handleMainStepChange}
+            count={workflowSteps.length}
+            linear={false}
+          >
             <StepsList>
-              <StepsItem index={0} title="Verify Applicant Information" />
-              <StepsItem index={1} title="Confirm Parcel Details" />
-              <StepsItem index={2} title="Upload Required Documents" />
-              <StepsItem index={3} title="Review & Submit" />
+              {workflowSteps.map((step, index) => (
+                <StepsItem
+                  key={index}
+                  index={index}
+                  title={step.title}
+                  disabled={step.status === 'locked'}
+                />
+              ))}
             </StepsList>
+          </StepsRoot>
+        </Box>
 
-            <Stack>
-              <StepsContent index={0}>
-                {/* Applicant Info Component */}
-                Verify your information
-              </StepsContent>
-              
-              <StepsContent index={1}>
-                {/* Parcel Details Component */}
-                Review selected parcels
-              </StepsContent>
-              
-              <StepsContent index={2}>
-                {/* Document Upload Component */}
-                Upload required documents
-              </StepsContent>
-              
-              <StepsContent index={3}>
-                {/* Review Component */}
-                Review your application
-              </StepsContent>
-
-              <StepsCompletedContent>
-                Ready to submit your application!
-              </StepsCompletedContent>
-
-              <Group>
-                <Button variant="outline" onClick={onCancel}>
-                  Cancel
-                </Button>
-                <Box>
-                  <StepsPrevTrigger asChild>
-                    <Button variant="outline" mr={2}>
-                      Previous
-                    </Button>
-                  </StepsPrevTrigger>
-                  <StepsNextTrigger asChild>
-                    <Button 
-                      colorScheme="blue"
-                      onClick={value === 3 ? handleSubmit : undefined}
-                    >
-                      {value === 3 ? 'Submit' : 'Next'}
-                    </Button>
-                  </StepsNextTrigger>
-                </Box>
-              </Group>
-            </Stack>
-          </>
+        {/* Sub-steps for current main step */}
+        {workflowSteps[currentMainStep] && (
+          <Box>
+            <Heading size="md" mb={4}>
+              {workflowSteps[currentMainStep].title} Details
+            </Heading>
+            <List.Root spacing={2}>
+              {workflowSteps[currentMainStep].subSteps.map((subStep, index) => (
+                <List.Item
+                  key={index}
+                  p={3}
+                  cursor={subStep.isClickable ? 'pointer' : 'default'}
+                  bg={selectedSubStep === subStep.id ? `${bgColor}` : 'transparent'}
+                  _hover={subStep.isClickable ? { bg: `${bgColor}` } : {}}
+                  borderRadius="md"
+                  borderWidth="1px"
+                  borderColor={borderColor}
+                  onClick={() => handleSubStepClick(currentMainStep, subStep)}
+                >
+                  <Stack direction="row" align="center" justify="space-between">
+                    <Text>{subStep.title}</Text>
+                    {subStep.status && (
+                      <Text
+                        fontSize="sm"
+                        color={subStep.status === 'locked' ? 'gray.500' : 'blue.500'}
+                      >
+                        {subStep.status}
+                      </Text>
+                    )}
+                  </Stack>
+                </List.Item>
+              ))}
+            </List.Root>
+          </Box>
         )}
-      </StepsRoot>
+
+        {/* Render selected sub-step content */}
+        {renderSubStepContent()}
+      </Stack>
     </Box>
   );
 };

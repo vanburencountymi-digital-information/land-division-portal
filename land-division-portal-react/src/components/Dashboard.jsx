@@ -67,6 +67,10 @@ const Dashboard = () => {
     setSelectedAction(null);
   };
 
+  const handleSelectSubStep = (subStepId) => {
+    console.log('Selected sub-step:', subStepId);
+  };
+
   const renderMainContent = () => {
     switch (viewMode) {
       case 'detail':
@@ -82,6 +86,7 @@ const Dashboard = () => {
             selectedParcels={selectedParcels}
             actionType={selectedAction}
             onCancel={handleCancelApplication}
+            onSelectSubStep={handleSelectSubStep}
           />
         );
       case 'parcelDetail':
