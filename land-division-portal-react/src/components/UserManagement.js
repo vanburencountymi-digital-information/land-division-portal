@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { db } from '../firebase/firebase';
 import { ROLES } from '../utils/roles';
-import { toaster } from './ui/toaster';
+import { toaster } from './ui/oldCustomToaster';
 
 const UserManagement = () => {
     const [users, setUsers] = useState([]);

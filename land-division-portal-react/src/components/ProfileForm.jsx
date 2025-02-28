@@ -11,7 +11,12 @@ import {
 import { useTheme } from 'next-themes';
 import { Field } from './ui/field';
 
-const ProfileForm = ({ initialData, onSubmit }) => {
+const ProfileForm = ({ 
+  initialData, 
+  onSubmit, 
+  submitButtonText = "Save Profile",
+  showBackToDashboard = true 
+}) => {
   const { theme } = useTheme();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState({});
@@ -352,7 +357,7 @@ const ProfileForm = ({ initialData, onSubmit }) => {
           disabled={isSubmitting}
           width="full"
         >
-          {isSubmitting ? "Saving..." : "Save Profile"}
+          {isSubmitting ? "Saving..." : submitButtonText}
         </Button>
       </form>
     </Box>

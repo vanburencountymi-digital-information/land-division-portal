@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import ApplicationList from './dashboard/ApplicationList';
 import ApplicationDetail from './dashboard/ApplicationDetail';
@@ -15,6 +15,7 @@ import {
 import { MdExpandLess, MdExpandMore } from 'react-icons/md';
 import { useTheme } from 'next-themes';
 import ApplicationWizard from './ApplicationWizard';
+import { useLocation } from 'react-router-dom';
 
 const Dashboard = () => {
   const { currentUser } = useAuth();
@@ -33,9 +34,25 @@ const Dashboard = () => {
   const sidebarBorderColor = theme === 'dark' ? 'gray.600' : 'gray.200';
   const mainBg = theme === 'dark' ? 'gray.900' : 'gray.50';
 
+  const location = useLocation();
+
+  // Check for URL parameters to reset view
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const viewParam = params.get('view');
+    
+    if (viewParam === 'list') {
+      setViewMode('list');
+      setSelectedApplicationId(null);
+      setSelectedParcelId(null);
+      setSelectedParcels([]);
+      setSelectedAction(null);
+    }
+  }, [location]);
+
   const handleApplicationClick = (applicationId) => {
     setSelectedApplicationId(applicationId);
-    setViewMode('detail');
+    setViewMode('wizard');
   };
 
   const handleNewApplication = (additionalData = null) => {
@@ -73,20 +90,15 @@ const Dashboard = () => {
 
   const renderMainContent = () => {
     switch (viewMode) {
-      case 'detail':
-        return (
-          <ApplicationDetail 
-            applicationId={selectedApplicationId}
-            onBack={handleBackToList}
-          />
-        );
       case 'wizard':
         return (
           <ApplicationWizard 
             selectedParcels={selectedParcels}
             actionType={selectedAction}
-            onCancel={handleCancelApplication}
+            onCancel={handleBackToList}
             onSelectSubStep={handleSelectSubStep}
+            existingApplicationId={selectedApplicationId}
+            isEditMode={!!selectedApplicationId}
           />
         );
       case 'parcelDetail':

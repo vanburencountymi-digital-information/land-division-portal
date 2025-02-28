@@ -28,7 +28,7 @@ const ApplicationList = ({ onApplicationClick, onNewApplication }) => {
       try {
         const applicationsRef = db.collection('applications');
         const snapshot = await applicationsRef
-          .where('applicantId', '==', currentUser.uid)
+          .where('userId', '==', currentUser.uid)
           .orderBy('createdAt', 'desc')
           .get();
 

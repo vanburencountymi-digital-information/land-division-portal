@@ -13,8 +13,12 @@ import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 import { auth } from '../firebase/firebase';
+import { useTheme } from 'next-themes';
 
 const SignInCustom = () => {
+  const { theme } = useTheme();
+  const bgColor = theme === 'dark' ? 'gray.700' : 'white';
+  const textColor = theme === 'dark' ? 'white' : 'black';
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
@@ -66,24 +70,40 @@ const SignInCustom = () => {
   };
 
   return (
-    <Box maxW="md" mx="auto" p={6} boxShadow="lg" borderRadius="md" bg="white" divideY="1px" divideColor="gray.200">
+    <Box 
+      maxW="md" 
+      mx="auto" 
+      p={6} 
+      boxShadow="lg" 
+      borderRadius="md" 
+      bg={bgColor} 
+      color={textColor}
+      divideY="1px" 
+      divideColor={theme === 'dark' ? 'gray.600' : 'gray.200'}
+    >
       <VStack as="form" spacing={4} onSubmit={handleEmailSignIn}>
         <Field.Root isRequired>
-          <Field.Label>Email address</Field.Label>
+          <Field.Label color={textColor}>Email address</Field.Label>
           <Input
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="Enter your email"
+            bg={theme === 'dark' ? 'gray.600' : 'white'}
+            color={textColor}
+            borderColor={theme === 'dark' ? 'gray.500' : 'gray.200'}
           />
         </Field.Root>
         <Field.Root isRequired>
-          <Field.Label>Password</Field.Label>
+          <Field.Label color={textColor}>Password</Field.Label>
           <Input
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="Enter your password"
+            bg={theme === 'dark' ? 'gray.600' : 'white'}
+            color={textColor}
+            borderColor={theme === 'dark' ? 'gray.500' : 'gray.200'}
           />
         </Field.Root>
         {error && (
@@ -95,18 +115,36 @@ const SignInCustom = () => {
             </Alert.Content>
           </Alert.Root>
         )}
-        <Button type="submit" colorPalette="teal" isLoading={loading} width="full">
+        <Button 
+          type="submit" 
+          colorPalette="teal" 
+          isLoading={loading} 
+          width="full"
+        >
           Sign In with Email
         </Button>
       </VStack>
-      <Text mt={4} textAlign="center">
+      <Text mt={4} textAlign="center" color={textColor}>
         OR
       </Text>
-      <Button mt={4} colorPalette="red" onClick={handleGoogleSignIn} isLoading={loading} width="full">
+      <Button 
+        mt={4} 
+        colorPalette="red" 
+        onClick={handleGoogleSignIn} 
+        isLoading={loading} 
+        width="full"
+      >
         Sign In with Google
       </Button>
-      <Text mt={4} textAlign="center">
-        Don't have an account? <ChakraLink as={RouterLink} to="/signup">Sign up</ChakraLink>
+      <Text mt={4} textAlign="center" color={textColor}>
+        Don't have an account?{' '}
+        <ChakraLink 
+          as={RouterLink} 
+          to="/signup" 
+          color={theme === 'dark' ? 'teal.300' : 'teal.500'}
+        >
+          Sign up
+        </ChakraLink>
       </Text>
     </Box>
   );

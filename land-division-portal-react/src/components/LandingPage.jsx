@@ -74,7 +74,7 @@ const LandingPage = () => {
           onClick={() => navigate('/dashboard')}
           disabled={!profileCompleted}
         >
-          My Applications
+          Dashboard
         </Button>
         <Button
           colorPalette="purple"

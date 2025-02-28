@@ -2,7 +2,7 @@
 import React from 'react';
 import { useTheme } from 'next-themes';
 import { Box, Flex, Heading, Button, HStack } from '@chakra-ui/react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { hasPermission } from '../utils/roles';
 
@@ -11,6 +11,7 @@ const Header = () => {
   const bgColor = theme === 'dark' ? 'blue.700' : 'blue.100';
   const textColor = theme === 'dark' ? 'white' : 'black';
   const navigate = useNavigate();
+  const location = useLocation();
   const { logout, currentUser, userRole } = useAuth();
 
   const handleSignOut = async () => {
@@ -19,6 +20,16 @@ const Header = () => {
       navigate('/'); // Navigate to sign in page
     } catch (error) {
       console.error("Failed to sign out:", error);
+    }
+  };
+
+  const handleDashboardClick = () => {
+    // If already on dashboard, set URL parameter to reset view
+    if (location.pathname === '/dashboard') {
+      navigate('/dashboard?view=list');
+    } else {
+      // Otherwise just navigate to dashboard with default view
+      navigate('/dashboard?view=list');
     }
   };
 
@@ -33,8 +44,8 @@ const Header = () => {
             <Button variant="ghost" color={textColor} onClick={() => navigate('/landing')}>
               Home
             </Button>
-            <Button variant="ghost" color={textColor}>
-              Applications
+            <Button variant="ghost" color={textColor} onClick={handleDashboardClick}>
+              Dashboard
             </Button>
             {hasPermission(userRole, 'canManageUsers') && (
               <Button variant="ghost" color={textColor} onClick={() => navigate('/user-management')}>
@@ -59,7 +70,7 @@ const Header = () => {
         </Flex>
         {currentUser && (
           <Flex alignItems="center">
-            <span style={{ marginRight: '1rem' }}>{currentUser.email}</span>
+            <span style={{ marginRight: '1rem' , color: textColor}}>{currentUser.email}</span>
             <Button
               onClick={handleSignOut}
               colorPalette="red"
