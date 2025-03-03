@@ -12,7 +12,7 @@ import {
   Flex,
   Spinner,
 } from '@chakra-ui/react';
-import ProfileForm from './ProfileForm';
+import ProfileForm from './forms/ProfileForm';
 import '../styles/Profile.css';
 
 const Profile = () => {

@@ -1,9 +1,23 @@
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import {
+  Box,
+  Input,
+  Button,
+  Text,
+  VStack,
+  Alert,
+  Field,
+  Link as ChakraLink,
+} from '@chakra-ui/react';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { auth, db } from '../firebase/firebase';
 import { ROLES } from '../utils/roles';
+import { useTheme } from 'next-themes';
 
 const SignUp = () => {
+    const { theme } = useTheme();
+    const bgColor = theme === 'dark' ? 'gray.700' : 'white';
+    const textColor = theme === 'dark' ? 'white' : 'black';
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
@@ -42,143 +56,93 @@ const SignUp = () => {
     };
 
     return (
-        <div style={{
-            minHeight: '100vh',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            backgroundColor: '#f5f5f5'
-        }}>
-            <div style={{
-                padding: '2rem',
-                backgroundColor: 'white',
-                borderRadius: '8px',
-                boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-                width: '100%',
-                maxWidth: '400px'
-            }}>
-                <h2 style={{ 
-                    textAlign: 'center',
-                    marginBottom: '1.5rem'
-                }}>
-                    Create an Account
-                </h2>
-                
-                {error && (
-                    <div style={{
-                        padding: '0.75rem',
-                        marginBottom: '1rem',
-                        backgroundColor: '#f8d7da',
-                        color: '#721c24',
-                        borderRadius: '4px',
-                        textAlign: 'center'
-                    }}>
-                        {error}
-                    </div>
-                )}
+        <Box 
+          maxW="md" 
+          mx="auto" 
+          p={6} 
+          boxShadow="lg" 
+          borderRadius="md" 
+          bg={bgColor} 
+          color={textColor}
+          divideY="1px" 
+          divideColor={theme === 'dark' ? 'gray.600' : 'gray.200'}
+        >
+            <Text fontSize="2xl" fontWeight="bold" mb={6} textAlign="center">
+                Create an Account
+            </Text>
+            
+            {error && (
+                <Alert.Root status="error" mb={4}>
+                    <Alert.Indicator />
+                    <Alert.Content>
+                        <Alert.Title>Error</Alert.Title>
+                        <Alert.Description>{error}</Alert.Description>
+                    </Alert.Content>
+                </Alert.Root>
+            )}
 
-                <form onSubmit={handleSubmit}>
-                    <div style={{ marginBottom: '1rem' }}>
-                        <label 
-                            htmlFor="email"
-                            style={{
-                                display: 'block',
-                                marginBottom: '0.5rem'
-                            }}
-                        >
-                            Email
-                        </label>
-                        <input
-                            type="email"
-                            id="email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            required
-                            style={{
-                                width: '100%',
-                                padding: '0.5rem',
-                                border: '1px solid #ddd',
-                                borderRadius: '4px'
-                            }}
-                        />
-                    </div>
+            <VStack as="form" spacing={4} onSubmit={handleSubmit}>
+                <Field.Root isRequired>
+                    <Field.Label color={textColor}>Email</Field.Label>
+                    <Input
+                        type="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        placeholder="Enter your email"
+                        bg={theme === 'dark' ? 'gray.600' : 'white'}
+                        color={textColor}
+                        borderColor={theme === 'dark' ? 'gray.500' : 'gray.200'}
+                    />
+                </Field.Root>
 
-                    <div style={{ marginBottom: '1rem' }}>
-                        <label 
-                            htmlFor="password"
-                            style={{
-                                display: 'block',
-                                marginBottom: '0.5rem'
-                            }}
-                        >
-                            Password
-                        </label>
-                        <input
-                            type="password"
-                            id="password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            required
-                            style={{
-                                width: '100%',
-                                padding: '0.5rem',
-                                border: '1px solid #ddd',
-                                borderRadius: '4px'
-                            }}
-                        />
-                    </div>
+                <Field.Root isRequired>
+                    <Field.Label color={textColor}>Password</Field.Label>
+                    <Input
+                        type="password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        placeholder="Enter your password"
+                        bg={theme === 'dark' ? 'gray.600' : 'white'}
+                        color={textColor}
+                        borderColor={theme === 'dark' ? 'gray.500' : 'gray.200'}
+                    />
+                </Field.Root>
 
-                    <div style={{ marginBottom: '1.5rem' }}>
-                        <label 
-                            htmlFor="confirmPassword"
-                            style={{
-                                display: 'block',
-                                marginBottom: '0.5rem'
-                            }}
-                        >
-                            Confirm Password
-                        </label>
-                        <input
-                            type="password"
-                            id="confirmPassword"
-                            value={confirmPassword}
-                            onChange={(e) => setConfirmPassword(e.target.value)}
-                            required
-                            style={{
-                                width: '100%',
-                                padding: '0.5rem',
-                                border: '1px solid #ddd',
-                                borderRadius: '4px'
-                            }}
-                        />
-                    </div>
+                <Field.Root isRequired>
+                    <Field.Label color={textColor}>Confirm Password</Field.Label>
+                    <Input
+                        type="password"
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                        placeholder="Confirm your password"
+                        bg={theme === 'dark' ? 'gray.600' : 'white'}
+                        color={textColor}
+                        borderColor={theme === 'dark' ? 'gray.500' : 'gray.200'}
+                    />
+                </Field.Root>
 
-                    <button
-                        type="submit"
-                        disabled={loading}
-                        style={{
-                            width: '100%',
-                            padding: '0.75rem',
-                            backgroundColor: '#0066cc',
-                            color: 'white',
-                            border: 'none',
-                            borderRadius: '4px',
-                            cursor: loading ? 'not-allowed' : 'pointer',
-                            opacity: loading ? 0.7 : 1
-                        }}
-                    >
-                        {loading ? 'Creating Account...' : 'Sign Up'}
-                    </button>
-                </form>
+                <Button
+                    type="submit"
+                    colorPalette="teal"
+                    isLoading={loading}
+                    width="full"
+                    mt={2}
+                >
+                    {loading ? 'Creating Account...' : 'Sign Up'}
+                </Button>
+            </VStack>
 
-                <div style={{
-                    marginTop: '1rem',
-                    textAlign: 'center'
-                }}>
-                    Already have an account? <Link to="/" style={{ color: '#0066cc' }}>Sign In</Link>
-                </div>
-            </div>
-        </div>
+            <Text mt={4} textAlign="center" color={textColor}>
+                Already have an account?{' '}
+                <ChakraLink 
+                    as={RouterLink} 
+                    to="/" 
+                    color={theme === 'dark' ? 'teal.300' : 'teal.500'}
+                >
+                    Sign In
+                </ChakraLink>
+            </Text>
+        </Box>
     );
 };
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import ProfileForm from '../ProfileForm';
+import ProfileForm from './ProfileForm';
 import {
   Box,
   VStack,

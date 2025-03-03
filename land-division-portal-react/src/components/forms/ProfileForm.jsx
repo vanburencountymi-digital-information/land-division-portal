@@ -9,7 +9,7 @@ import {
   Button,
 } from '@chakra-ui/react';
 import { useTheme } from 'next-themes';
-import { Field } from './ui/field';
+import { Field } from '../ui/field';
 
 const ProfileForm = ({ 
   initialData, 
