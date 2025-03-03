@@ -29,7 +29,7 @@ const DocumentUploadForm = ({
   const [documents, setDocuments] = useState({
     taxReleaseForm: null,
     proofOfOwnership: null,
-    surveyPlat: null,
+    survey: null,
     // We can add conditional documents later based on municipality
   });
   const [uploadedFiles, setUploadedFiles] = useState({});
@@ -43,7 +43,7 @@ const DocumentUploadForm = ({
 
   // Check if all required documents are uploaded
   const allRequiredDocumentsUploaded = () => {
-    const requiredDocs = ['taxReleaseForm', 'proofOfOwnership', 'surveyPlat'];
+    const requiredDocs = ['taxReleaseForm', 'proofOfOwnership', 'survey'];
     return requiredDocs.every(docType => uploadedFiles[docType]);
   };
 
@@ -243,7 +243,7 @@ const DocumentUploadForm = ({
               <Text fontWeight="medium">
                 {docType === 'taxReleaseForm' ? 'Tax Release Form' : 
                  docType === 'proofOfOwnership' ? 'Proof of Ownership' : 
-                 docType === 'surveyPlat' ? 'Survey Plat' : docType}
+                 docType === 'survey' ? 'Survey' : docType}
               </Text>
               <Badge colorPalette="green">Uploaded</Badge>
             </Stack>
@@ -288,8 +288,8 @@ const DocumentUploadForm = ({
       
       {/* Survey Plat */}
       {renderDocumentField(
-        'surveyPlat',
-        'Survey Plat',
+        'survey',
+        'Survey',
         `A certified survey showing the proposed ${actionType?.toLowerCase() || 'division'} of the property.`
       )}
       
