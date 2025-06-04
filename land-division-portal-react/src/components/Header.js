@@ -38,7 +38,7 @@ const Header = () => {
       <Flex h={16} alignItems="center" justifyContent="space-between">
         <HStack spacing={8} alignItems="center">
           <Heading as="h1" size="xl" color={textColor}>
-            Land Division Portal
+            Land Management Portal
           </Heading>
           <HStack as="nav" spacing={4} display={{ base: 'none', md: 'flex' }}>
             <Button variant="ghost" color={textColor} onClick={() => navigate('/landing')}>

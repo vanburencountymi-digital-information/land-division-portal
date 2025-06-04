@@ -9,7 +9,6 @@ import {
   Heading,
   Button,
   Spinner,
-  Text,
 } from '@chakra-ui/react';
 import { useTheme } from 'next-themes';
 
@@ -63,7 +62,7 @@ const LandingPage = () => {
     >
       {userName && <Heading size="lg">Hi, {userName}!</Heading>}
       <Heading size="xl">
-        {profileCompleted ? 'Welcome back to' : 'Welcome to'} the Land Division Portal
+        {profileCompleted ? 'Welcome back to' : 'Welcome to'} the Land Management Portal
       </Heading>
       <HStack spacing={4}>
         <Button colorPalette="teal" onClick={() => navigate('/profile')}>
